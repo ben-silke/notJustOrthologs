@@ -20,10 +20,10 @@ def parseArgs():
     #parser.add_argument("-t",help="Number of Cores",action="store",dest="threads",type=int, default=-1, required=False)
     args = parser.parse_args()
     if not os.path.isfile(args.gff):
-        print(args.gff, "is not a correct file path!")
+        print args.gff, "is not a correct file path!"
         sys.exit()
     if not os.path.isfile(args.fasta):
-        print(args.fasta, "is not a correct file path!")
+        print args.fasta, "is not a correct file path!"
         sys.exit()
 
     return args
@@ -69,7 +69,7 @@ def readGFF(output, gff, allSeq):
                 continue
         smaller = currentSeq[int(info[3])-1:int(info[4])]
         if len(smaller) ==0:
-            print('a')
+            print 'a'
             continue
         if info[6] == '-':
             my_seq = Seq(smaller)

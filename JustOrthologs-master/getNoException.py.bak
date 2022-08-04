@@ -23,7 +23,7 @@ def parseArgs():
 	#parser.add_argument("-t",help="Number of Cores",action="store",dest="threads",type=int, default=-1, required=False)
 	args = parser.parse_args()
 	if not os.path.isfile(args.input):
-		print((args.input, "is not a correct file path!"))
+		print(args.input, "is not a correct file path!")
 		sys.exit()
 	return args
 

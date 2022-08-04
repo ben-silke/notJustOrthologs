@@ -7,7 +7,7 @@ import os
 def getCor(largeList,smallList,totalCor,looser,GLOBAL_BEST_COR):
 	for pos in range(len(smallList)-1):
 		bestCor = GLOBAL_BEST_COR
-		for otherPos in range(len(largeList)-1): 
+		for otherPos in xrange(len(largeList)-1): 
 			if len(largeList[otherPos]) != len(smallList[pos]):
 				continue
 			if (len(smallList[pos])<15) or (len(largeList[otherPos])<15):
@@ -154,10 +154,10 @@ def parseArgs():
 	parser.add_argument("-r",help="Correlation value",action="store",dest="correlation", default=-1.0,type=float, required=False)
 	args = parser.parse_args()
 	if not os.path.isfile(args.subject):
-		print(args.subject, "is not a correct file path!")
+		print args.subject, "is not a correct file path!"
 		sys.exit()
 	if not os.path.isfile(args.query):
-		print(args.query, "is not a correct file path!")
+		print args.query, "is not a correct file path!"
 		sys.exit()
 	looser =False
 	if args.distant:
@@ -290,7 +290,7 @@ def combineFiles2(input,in2,output):
 	for info in in2:
 		line2 = info[1]
 		lastLine = info[2].strip()
-		if line2 in list(lineDict.keys()):
+		if line2 in lineDict.keys():
 			if lineDict[line2] ==lastLine:
 				lastLine = ""
 				continue
@@ -301,7 +301,7 @@ def combineFiles2(input,in2,output):
 				keysInDict.remove(line2)
 				lastLine = ""
 				continue
-		elif lastLine in list(lineDict.keys()):
+		elif lastLine in lineDict.keys():
 			if lineDict[lastLine] ==line2:
 				lastLine = ""
 				continue
