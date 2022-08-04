@@ -104,13 +104,13 @@ def parseArgs():
         parser.error("--c cannot be used with --d")
         sys.exit()
     if args.output and not args.run and not args.sort:
-        print "Warning: Output file is only used when included with --r option or --s"
+        print("Warning: Output file is only used when included with --r option or --s")
     if args.distant and not args.run:
-        print "Warning: --d is only used when included with --r option"
+        print("Warning: --d is only used when included with --r option")
     if args.combine and not args.run:
-        print "Warning: --c is only used when included with --r option"
+        print("Warning: --c is only used when included with --r option")
     if args.run and not args.sort:
-        print "Warning: It is highly recommended that you use --s when running --r"
+        print("Warning: It is highly recommended that you use --s when running --r")
 
     possibleFiles = {'gff3_One','gff3_Two','ref_One','ref_Two','fasta'}
     count = 0
@@ -119,7 +119,7 @@ def parseArgs():
         if x in possibleFiles and vars(args)[x] is not None:
             file= str(vars(args)[x])
             if not os.path.isfile(file):
-                print file, "is not a correct file path!"
+                print(file, "is not a correct file path!")
                 sys.exit()
     return args
 
@@ -133,7 +133,7 @@ def cleanUp(printFiles):
     for pos in possibleFiles:
         if printFiles:
             if os.path.isfile(pos):
-                print "Temporary File is located at:",pos
+                print("Temporary File is located at:",pos)
         else:
             if os.path.isfile(pos):
                 
@@ -150,7 +150,7 @@ def runExtract(gff3,ref,keep,num):
         command = ['python3', 'gff3_parser.py', '-g', gff3, '-f', ref, '-o', temp1]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
-        print "Error Occurred in Extract"
+        print("Error Occurred in Extract")
         cleanUp(True)
         sys.exit()
     return prog,temp1
@@ -163,7 +163,7 @@ def runFilter(input, num):
         command = ['python3', 'getNoException.py', '-i', input, '-o', temp1]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
-        print "Error Occurred in Filter"
+        print("Error Occurred in Filter")
         cleanUp(True)
         sys.exit()
     return prog,temp1
@@ -175,7 +175,7 @@ def runSort(input, fileName):
         command = ['bash', 'sortFastaBySeqLen.sh', input, fileName]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
-        print "Error Occurred in Sort"
+        print("Error Occurred in Sort")
         cleanUp(True)
         sys.exit()
     return prog,fileName
@@ -194,7 +194,7 @@ def runJustOrthologs(query,subject,threads,output,distant, combine):
             command = ['python3', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
-        print "Error Occurred in Running JustOrthologs"
+        print("Error Occurred in Running JustOrthologs")
     return prog
 
 
@@ -241,11 +241,11 @@ if __name__ =='__main__':
                 if  os.path.isfile(filter1):
                     os.remove(filter1)
             else:
-                print "Extracted file for",args.ref_One,"is located in:",extract1
+                print("Extracted file for",args.ref_One,"is located in:",extract1)
                 if  filter1!=extract1:
-                    print "Filtered file for",args.ref_One,"is located in:",filter1
+                    print("Filtered file for",args.ref_One,"is located in:",filter1)
         elif not args.keep:
-            print "Filtered file for",args.ref_One,"is located in:",filter1
+            print("Filtered file for",args.ref_One,"is located in:",filter1)
 
     if proc2 is not None:
         proc2.communicate()
@@ -265,11 +265,11 @@ if __name__ =='__main__':
                     
                     os.remove(filter2)
             else:
-                print "Extracted file for",args.ref_Two,"is located in:",extract2
+                print("Extracted file for",args.ref_Two,"is located in:",extract2)
                 if  filter2!=extract2:
-                    print "Filtered file for",args.ref_Two,"is located in:",filter2
+                    print("Filtered file for",args.ref_Two,"is located in:",filter2)
         elif not args.keep:
-            print "Filtered file for",args.ref_One,"is located in:",filter1
+            print("Filtered file for",args.ref_One,"is located in:",filter1)
 
     
 
@@ -289,7 +289,7 @@ if __name__ =='__main__':
                 os.remove(filter1)
             else:
                 if  filter1!=args.fasta1:
-                    print "Filtered file for",args.fasta1,"is located in:",filter1
+                    print("Filtered file for",args.fasta1,"is located in:",filter1)
         else:
             sort1=args.fasta1
     
@@ -309,16 +309,16 @@ if __name__ =='__main__':
                 os.remove(filter2)
             else:
                 if  filter2!=args.fasta2:
-                    print "Filtered file for",args.fasta2,"is located in:",filter2
+                    print("Filtered file for",args.fasta2,"is located in:",filter2)
         else:
             sort2=args.fasta2
     if sort1 is not None and sort2 is not None:
         if  os.stat(sort1).st_size==0:
-            print "Make sure input files are in the correct format"
+            print("Make sure input files are in the correct format")
             cleanUp(False)
             sys.exit()
         if  os.stat(sort2).st_size==0:
-            print "Make sure input files are in the correct format"
+            print("Make sure input files are in the correct format")
             cleanUp(False)
             sys.exit()
         
@@ -352,11 +352,11 @@ if __name__ =='__main__':
                     os.remove(sort1)
                     os.remove(sort2)
         else: 
-            print "Sorted files are located in:",sort1, "and", sort2
+            print("Sorted files are located in:",sort1, "and", sort2)
 
     elif sort1 is not None and args.ref_One is not None:    
         if  os.stat(sort1).st_size==0:
-            print "Make sure input files are in the correct format"
+            print("Make sure input files are in the correct format")
             cleanUp(False)
             sys.exit()
         if args.output:
@@ -365,9 +365,9 @@ if __name__ =='__main__':
             prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             prog.communicate()
             
-            print "Sorted file is located in:",correctOutput
+            print("Sorted file is located in:",correctOutput)
         else:
-            print "Sorted file is located in:",sort1
+            print("Sorted file is located in:",sort1)
 
 
 
