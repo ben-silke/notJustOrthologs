@@ -41,7 +41,7 @@ def readInputFiles(args):
 			path += '/'
 		allSpecies = [path +i for i in allSpecies1]
 	else:
-		print "You must supply input files or an input directory."
+		print("You must supply input files or an input directory.")
 		sys.exit()
 	return allSpecies
 

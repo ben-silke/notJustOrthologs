@@ -51,9 +51,9 @@ for a; do
     shift
     for b; do
 		file_b=`basename ${b%%.*}`
-		python2 wrapper.py -g1 "${a}${gff_extension}" -g2 "${b}${gff_extension}" -r1 "${a}${fasta_extension}" -r2 "${b}${fasta_extension}" -all -o ${output_dir}/${file_a}_${file_b}
+		python3 wrapper.py -g1 "${a}${gff_extension}" -g2 "${b}${gff_extension}" -r1 "${a}${fasta_extension}" -r2 "${b}${fasta_extension}" -all -o ${output_dir}/${file_a}_${file_b}
     done
 done
 
-python2 combineOrthoGroups.py -id ${output_dir} -o ${end_output}
+python3 combineOrthoGroups.py -id ${output_dir} -o ${end_output}
 

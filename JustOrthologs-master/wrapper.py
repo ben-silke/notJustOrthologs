@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python3
 import sys
 import argparse
 import os
@@ -147,7 +147,7 @@ def runExtract(gff3,ref,keep,num):
     '''
     try:
         temp1 = ".extract_" +str(num) +"_" + TEMP_FILE_NUM 
-        command = ['python2', 'gff3_parser.py', '-g', gff3, '-f', ref, '-o', temp1]
+        command = ['python3', 'gff3_parser.py', '-g', gff3, '-f', ref, '-o', temp1]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
         print "Error Occurred in Extract"
@@ -160,7 +160,7 @@ def runFilter(input, num):
     '''
     try:
         temp1 = ".filter_" +str(num) +"_" + TEMP_FILE_NUM
-        command = ['python2', 'getNoException.py', '-i', input, '-o', temp1]
+        command = ['python3', 'getNoException.py', '-i', input, '-o', temp1]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
         print "Error Occurred in Filter"
@@ -187,11 +187,11 @@ def runJustOrthologs(query,subject,threads,output,distant, combine):
     try:
         command = None
         if distant:
-            command = ['python2', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output,'-d']
+            command = ['python3', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output,'-d']
         elif combine:
-            command = ['python2', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output,'-c']
+            command = ['python3', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output,'-c']
         else:
-            command = ['python2', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output]
+            command = ['python3', 'justOrthologs.py', '-q', query,'-s',subject,'-t',threads,'-o',output]
         prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
         print "Error Occurred in Running JustOrthologs"
