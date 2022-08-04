@@ -119,7 +119,7 @@ def parseArgs():
         if x in possibleFiles and vars(args)[x] is not None:
             file= str(vars(args)[x])
             if not os.path.isfile(file):
-                print((file, "is not a correct file path!"))
+                print(file, "is not a correct file path!")
                 sys.exit()
     return args
 
@@ -133,7 +133,7 @@ def cleanUp(printFiles):
     for pos in possibleFiles:
         if printFiles:
             if os.path.isfile(pos):
-                print(("Temporary File is located at:",pos))
+                print("Temporary File is located at:",pos)
         else:
             if os.path.isfile(pos):
                 
@@ -241,11 +241,11 @@ if __name__ =='__main__':
                 if  os.path.isfile(filter1):
                     os.remove(filter1)
             else:
-                print(("Extracted file for",args.ref_One,"is located in:",extract1))
+                print("Extracted file for",args.ref_One,"is located in:",extract1)
                 if  filter1!=extract1:
-                    print(("Filtered file for",args.ref_One,"is located in:",filter1))
+                    print("Filtered file for",args.ref_One,"is located in:",filter1)
         elif not args.keep:
-            print(("Filtered file for",args.ref_One,"is located in:",filter1))
+            print("Filtered file for",args.ref_One,"is located in:",filter1)
 
     if proc2 is not None:
         proc2.communicate()
@@ -265,11 +265,11 @@ if __name__ =='__main__':
                     
                     os.remove(filter2)
             else:
-                print(("Extracted file for",args.ref_Two,"is located in:",extract2))
+                print("Extracted file for",args.ref_Two,"is located in:",extract2)
                 if  filter2!=extract2:
-                    print(("Filtered file for",args.ref_Two,"is located in:",filter2))
+                    print("Filtered file for",args.ref_Two,"is located in:",filter2)
         elif not args.keep:
-            print(("Filtered file for",args.ref_One,"is located in:",filter1))
+            print("Filtered file for",args.ref_One,"is located in:",filter1)
 
     
 
@@ -289,7 +289,7 @@ if __name__ =='__main__':
                 os.remove(filter1)
             else:
                 if  filter1!=args.fasta1:
-                    print(("Filtered file for",args.fasta1,"is located in:",filter1))
+                    print("Filtered file for",args.fasta1,"is located in:",filter1)
         else:
             sort1=args.fasta1
     
@@ -309,7 +309,7 @@ if __name__ =='__main__':
                 os.remove(filter2)
             else:
                 if  filter2!=args.fasta2:
-                    print(("Filtered file for",args.fasta2,"is located in:",filter2))
+                    print("Filtered file for",args.fasta2,"is located in:",filter2)
         else:
             sort2=args.fasta2
     if sort1 is not None and sort2 is not None:
@@ -352,7 +352,7 @@ if __name__ =='__main__':
                     os.remove(sort1)
                     os.remove(sort2)
         else: 
-            print(("Sorted files are located in:",sort1, "and", sort2))
+            print("Sorted files are located in:",sort1, "and", sort2)
 
     elif sort1 is not None and args.ref_One is not None:    
         if  os.stat(sort1).st_size==0:
@@ -365,9 +365,9 @@ if __name__ =='__main__':
             prog=  subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             prog.communicate()
             
-            print(("Sorted file is located in:",correctOutput))
+            print("Sorted file is located in:",correctOutput)
         else:
-            print(("Sorted file is located in:",sort1))
+            print("Sorted file is located in:",sort1)
 
 
 
