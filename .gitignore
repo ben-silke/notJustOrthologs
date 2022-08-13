@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Output files
+JustOrthologs-master/outputDir/
+
+# vscode settings
+settings.json

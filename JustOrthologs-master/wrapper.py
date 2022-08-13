@@ -1,8 +1,10 @@
 #! /usr/bin/env python3
+import random
 import sys
 import argparse
 import os
 import subprocess
+import uuid
 
 TEMP_FILE_NUM = ""
 
@@ -12,6 +14,8 @@ def checkTempNum(TEMP_FILE_NUM):
     Ensures that the same temporary file is used.
     """
     for fname in os.listdir("."):
+        print(f'{fname=}')
+        print(f'{TEMP_FILE_NUM=}')
         if fname.endswith(TEMP_FILE_NUM):
             return True
     return False
@@ -30,7 +34,7 @@ def parseArgs():
     )
 
     parser.add_argument(
-        "-g1",∑
+        "-g1",
         help="1st GFF3 (gzip allowed with .gz)",
         action="store",
         dest="gff3_One",
@@ -240,7 +244,6 @@ def cleanUp(printFiles):
                 print("Temporary File is located at:", pos)
         else:
             if os.path.isfile(pos):
-
                 os.remove(pos)
 
 
@@ -346,9 +349,16 @@ if __name__ == "__main__":
     """
     MAIN
     """
-    TEMP_FILE_NUM = str(int(os.urandom(3).encode("hex"), 16))
+    # TEMP_FILE_NUM = str(int(os.urandom(3).encode("hex"), 16))    
+    # TEMP_FILE_NUM = str((os.urandom(3)))
+    TEMP_FILE_NUM = str(random.randint(0, 1000000))
+    print(f'Temp File Number is {TEMP_FILE_NUM}')
+    
+
     while checkTempNum(TEMP_FILE_NUM):
-        TEMP_FILE_NUM = str(int(os.urandom(3).encode("hex"), 16))
+        # TEMP_FILE_NUM = str(int(os.urandom(3).encode("hex"), 16))
+        TEMP_FILE_NUM = str(random.randint(0, 1000000))
+
     args = parseArgs()
 
     proc1 = None
@@ -380,7 +390,7 @@ if __name__ == "__main__":
             sortProc, sort1 = runSort(filter1, temp1)
             sortProc.communicate()
             if not args.keep:
-
+                print(f'{extract1=}')
                 os.remove(extract1)
                 if os.path.isfile(filter1):
                     os.remove(filter1)

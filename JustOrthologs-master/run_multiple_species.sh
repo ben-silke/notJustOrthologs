@@ -41,10 +41,16 @@ shift $(( OPTIND-1 ))
 
 SED_EXEC="sed"
 OS_TYPE=`uname -s`
+
+
 if [ "${OS_TYPE}" == "Darwin" ]
 then
             SED_EXEC="gsed"
 fi
+echo $input_dir
+SED_EXEC="sed"
+echo $SED_EXEC
+
 set -- `ls -1 ${input_dir} | ${SED_EXEC} -e 's/\..*$//' | uniq`
 for a; do
 	file_a=`basename ${a%%.*}`
