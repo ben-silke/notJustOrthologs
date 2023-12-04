@@ -45,9 +45,7 @@ def writeGoodLines(args):
         input = gzip.open(args.input, "r")
     else:
         input = open(args.input, "r")
-    output = sys.stdout
-    if args.output:
-        output = open(args.output, "w")
+    output = open(args.output, "w") if args.output else sys.stdout
     header = ""
     geneName = ""
     countTotal = 0
@@ -66,9 +64,7 @@ def writeGoodLines(args):
                         bestGenes[geneName][0] = header
                         bestGenes[geneName][1] = line
                 else:
-                    bestGenes[geneName] = []
-                    bestGenes[geneName].append(header)
-                    bestGenes[geneName].append(line)
+                    bestGenes[geneName] = [header, line]
                 header = ""
                 if countTotal == 1:
                     goodHeader = False
@@ -80,16 +76,13 @@ def writeGoodLines(args):
                 continue
             if "partial=true" in line:
                 continue
-            if "gene=" in line:
-                geneName = line.split("gene=")[1].split(";")[0]
-            else:
-                geneName = line
+            geneName = line.split("gene=")[1].split(";")[0] if "gene=" in line else line
             header = line
             goodHeader = True
             countTotal = 0
 
-    for key in bestGenes:
-        for line in bestGenes[key]:
+    for value in bestGenes.values():
+        for line in value:
             output.write(line + "\n")
     input.close()
     output.close()

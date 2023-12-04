@@ -127,8 +127,7 @@ def getCor(largeList, smallList, totalCor, looser, GLOBAL_BEST_COR):
                 )
             )
             if looser:
-                cor = -2.2
-                cor += float(
+                cor = -2.2 + float(
                     A
                     + A1
                     + A2
@@ -146,23 +145,7 @@ def getCor(largeList, smallList, totalCor, looser, GLOBAL_BEST_COR):
                     + A14
                     + A15
                 )
-                sortList = []
-                sortList.append(A)
-                sortList.append(A1)
-                sortList.append(A2)
-                sortList.append(A3)
-                sortList.append(A4)
-                sortList.append(A5)
-                sortList.append(A6)
-                sortList.append(A7)
-                sortList.append(A8)
-                sortList.append(A9)
-                sortList.append(A0)
-                sortList.append(A11)
-                sortList.append(A12)
-                sortList.append(A13)
-                sortList.append(A14)
-                sortList.append(A15)
+                sortList = [A, A1, A2, A3, A4, A5, A6, A7, A8, A9, A0, A11, A12, A13, A14, A15]
                 sortList = sorted(sortList)
                 if sortList[-1] < 0.03:
                     bestCor = cor
@@ -198,50 +181,49 @@ def getCor(largeList, smallList, totalCor, looser, GLOBAL_BEST_COR):
 
 
 def readFile2(input2, info, BSSF, looser, cor):
-    in2 = open(input2, "r")
-    smallestStringSize = len(info) - 1
-    bestOrthologHeader = ""
-    bestOrthNum = -1
-    numSeen = 0
-    for otherLine in in2:
-        totalCor = 0
-        if otherLine[0] == ">":
-            otherHeader = otherLine
-            continue
-        numSeen += 1
-        info2 = otherLine.strip().split("*")
-        smallList = []
-        largeList = []
+    with open(input2, "r") as in2:
         smallestStringSize = len(info) - 1
-        if (len(info2) - 1) < (len(info) - 1):
-            smallestStringSize = len(info2) - 1
-            smallList = info2
-            largeList = info
-        else:
-            smallList = info
-            largeList = info2
-        maxNumSkipped = len(smallList) / 5
-        if maxNumSkipped < 3:
-            maxNumSkipped = (len(smallList) - 1) / 2
-        if (len(info2) - len(info)) > (maxNumSkipped + 1):
-            break
-        totalCor = 2 * abs(len(info) - len(info2))
-        if cor == -1 and looser:
-            totalCor = getCor(largeList, smallList, totalCor, looser, 0.1)
-        elif cor == -1 and not looser:
-            totalCor = getCor(largeList, smallList, totalCor, looser, 0.05)
-        else:
-            totalCor = getCor(largeList, smallList, totalCor, looser, cor)
-        if totalCor < BSSF:
-            BSSF = totalCor
-            bestOrthologHeader = otherHeader
-            bestOrthNum = numSeen
-        elif type(BSSF) == int:
-            if type(totalCor) == float:
+        bestOrthologHeader = ""
+        bestOrthNum = -1
+        numSeen = 0
+        for otherLine in in2:
+            totalCor = 0
+            if otherLine[0] == ">":
+                otherHeader = otherLine
+                continue
+            numSeen += 1
+            info2 = otherLine.strip().split("*")
+            smallList = []
+            largeList = []
+            smallestStringSize = len(info) - 1
+            if (len(info2) - 1) < (len(info) - 1):
+                smallestStringSize = len(info2) - 1
+                smallList = info2
+                largeList = info
+            else:
+                smallList = info
+                largeList = info2
+            maxNumSkipped = len(smallList) / 5
+            if maxNumSkipped < 3:
+                maxNumSkipped = (len(smallList) - 1) / 2
+            if (len(info2) - len(info)) > (maxNumSkipped + 1):
+                break
+            totalCor = 2 * abs(len(info) - len(info2))
+            if cor == -1 and looser:
+                totalCor = getCor(largeList, smallList, totalCor, looser, 0.1)
+            elif cor == -1:
+                totalCor = getCor(largeList, smallList, totalCor, looser, 0.05)
+            else:
+                totalCor = getCor(largeList, smallList, totalCor, looser, cor)
+            if (
+                totalCor >= BSSF
+                and type(BSSF) == int
+                and type(totalCor) == float
+                or totalCor < BSSF
+            ):
                 BSSF = totalCor
                 bestOrthologHeader = otherHeader
                 bestOrthNum = numSeen
-    in2.close()
     return (BSSF, bestOrthologHeader)
 
 
@@ -256,17 +238,12 @@ def searchOtherFile(inputStuff):
     info = line.strip().split("*")
     GLOBAL_BSSF = 2 * (len(info) - 1)
     if looser:
-        if len(info) < 6:
-            GLOBAL_BSSF = -2.15
-        else:
-            GLOBAL_BSSF = 0
+        GLOBAL_BSSF = -2.15 if len(info) < 6 else 0
     BSSF = GLOBAL_BSSF
     BSSF, bestOrthologHeader = readFile2(input2, info, BSSF, looser, cor)
     if type(BSSF) == int:
         return ""
-    if BSSF < GLOBAL_BSSF:
-        return (str(BSSF), header, bestOrthologHeader)
-    return ""
+    return (str(BSSF), header, bestOrthologHeader) if BSSF < GLOBAL_BSSF else ""
 
 
 def parseArgs():
@@ -325,15 +302,11 @@ def parseArgs():
     if not os.path.isfile(args.query):
         print(args.query, "is not a correct file path!")
         sys.exit()
-    looser = False
-    if args.distant:
-        looser = True
-    both = False
+    looser = bool(args.distant)
     if looser and args.combine:
         parser.error("--c cannot be used with --d")
         sys.exit()
-    if args.combine:
-        both = True
+    both = bool(args.combine)
     return (
         args.subject,
         args.output,
@@ -350,22 +323,18 @@ def callFindOrthologs(inputFile, input2File, threads, looser, cor):
     Input: Path to subject fasta, path to query fasta, number of threads, boolean for type of algorithm.
     Return: Results from search for orthologs.
     """
-    input = open(inputFile, "r")
-    pool = ""
-    if threads == -1:
-        pool = Pool()
-    else:
-        pool = Pool(threads)
-    header = ""
-    tasks = []
-    inQueue = 0
-    for line in input:
-        if line[0] == ">":
-            header = line
-            continue
-        tasks.append((header, line, input2File, looser, cor))
-    temp = pool.map(searchOtherFile, tasks, chunksize=1)
-    input.close()
+    with open(inputFile, "r") as input:
+        pool = ""
+        pool = Pool() if threads == -1 else Pool(threads)
+        header = ""
+        tasks = []
+        inQueue = 0
+        for line in input:
+            if line[0] == ">":
+                header = line
+                continue
+            tasks.append((header, line, input2File, looser, cor))
+        temp = pool.map(searchOtherFile, tasks, chunksize=1)
     return temp
 
 
@@ -377,9 +346,9 @@ def combineFiles(input, in2, output):
     Input: Results from 1st algorithm, results from 2nd algorithm, output file
     Returns: The combined result, or writes to an output file.
     """
-    keys = set()
     lineDict = dict()
     lastLine = ""
+    keys = set()
     for info in input:
         if info != "":
             line = info[1]
@@ -395,9 +364,7 @@ def combineFiles(input, in2, output):
             line = info[1]
             lastLine = info[2]
             if line in lineDict:
-                if lineDict[line] == lastLine:
-                    continue
-                else:
+                if lineDict[line] != lastLine:
                     if line in keys:
                         keys.remove(line)
                         badOnes.add(line)
@@ -413,9 +380,7 @@ def combineFiles(input, in2, output):
                             keys.remove(lineDict[lastLine])
                     continue
             elif lastLine in lineDict:
-                if lineDict[lastLine] == line:
-                    continue
-                else:
+                if lineDict[lastLine] != line:
                     if lastLine in keys:
                         keys.remove(lastLine)
                         badOnes.add(lastLine)
@@ -425,20 +390,15 @@ def combineFiles(input, in2, output):
                     if lineDict[lastLine] in keys:
                         badOnes.add(lineDict[lastLine])
                         keys.remove(lineDict[lastLine])
-                    if line in lineDict:
-                        if lineDict[line] in keys:
-                            badOnes.add(lineDict[line])
-                            keys.remove(lineDict[line])
-                    continue
-            else:
-                if not line in badOnes and not lastLine in badOnes:
-                    keys.add(line)
-                    lineDict[line] = lastLine
-                    lineDict[lastLine] = line
+                continue
+            elif line not in badOnes and lastLine not in badOnes:
+                keys.add(line)
+                lineDict[line] = lastLine
+                lineDict[lastLine] = line
     currentOrtho = 1
-    returnOrthologs = []
-
     if output == "":
+        returnOrthologs = []
+
         for key in keys:
             returnOrthologs.append((str(currentOrtho), key.strip(), lineDict[key]))
             currentOrtho += 1
@@ -446,8 +406,7 @@ def combineFiles(input, in2, output):
     else:
         for key in keys:
             output.write(
-                "Ortholog Group "
-                + str(currentOrtho)
+                f"Ortholog Group {str(currentOrtho)}"
                 + ":\t"
                 + key.strip()
                 + "\t"
@@ -462,8 +421,8 @@ def combineFiles2(input, in2, output):
     Input: Path to subject and query fasta files and the output file.
     Returns: None. Just writes to the output file.
     """
-    lineDict = dict()
     keysInDict = set()
+    lineDict = dict()
     for info in input:
         line2 = info[1]
         keysInDict.add(line2)
@@ -474,27 +433,21 @@ def combineFiles2(input, in2, output):
         line2 = info[1]
         lastLine = info[2].strip()
         if line2 in list(lineDict.keys()):
-            if lineDict[line2] == lastLine:
-                lastLine = ""
-                continue
-            else:
+            if lineDict[line2] != lastLine:
                 if lineDict[line2] in lineDict:
                     del lineDict[lineDict[line2]]
                 del lineDict[line2]
                 keysInDict.remove(line2)
-                lastLine = ""
-                continue
+            lastLine = ""
+            continue
         elif lastLine in list(lineDict.keys()):
-            if lineDict[lastLine] == line2:
-                lastLine = ""
-                continue
-            else:
+            if lineDict[lastLine] != line2:
                 keysInDict.remove(lineDict[lastLine])
                 if lineDict[lastLine] in lineDict:
                     del lineDict[lineDict[lastLine]]
                 del lineDict[lastLine]
-                lastLine = ""
-                continue
+            lastLine = ""
+            continue
         lineDict[line2] = lastLine
         lineDict[lastLine] = line2
         keysInDict.add(line2)
@@ -505,8 +458,7 @@ def combineFiles2(input, in2, output):
             continue
         keys.add(lineDict[key])
         output.write(
-            "Ortholog Group "
-            + str(groupNum)
+            f"Ortholog Group {str(groupNum)}"
             + ":\t"
             + key
             + "\t"

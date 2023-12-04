@@ -35,9 +35,7 @@ def parseArgs():
     parser.add_argument(
         "-o", help="outputFilePath", action="store", dest="output", required=False
     )
-    args = parser.parse_args()
-
-    return args
+    return parser.parse_args()
 
 
 def readInputFiles(args):
@@ -97,42 +95,41 @@ def addToDict(species, allOrthologs):
             been identified (by this algorithm) as being orthologous to that gene.
     Returns: A dictionary with the key being a gene name and the value is a set of all genes which have been identified (by this algorithm) as being orthologous to that gene.
     """
-    input = open(species, "r")
-    bothSpecies = input.next().strip().split("\t")
-    if len(bothSpecies) != 3:
-        return allOrthologs
-    spec2 = bothSpecies[1].split("/")[-1]
-    spec1 = bothSpecies[2].split("/")[-1]
-    # spec1 = bothSpecies[1].split('/')[-1]
-    # spec2 = bothSpecies[2].split('/')[-1]
-    for line in input:
-        line = line.strip()
-        bothGenes = line.split("\t")
-        if len(bothGenes) != 3:
-            continue
-        gene1 = spec1 + ":" + bothGenes[1]
-        if ";Name=" in gene1:
-            gene1 = spec1 + ":" + bothGenes[1].split(";Name=")[1].split(";")[0]
-        gene2 = spec2 + ":" + bothGenes[2]
-        if ";Name=" in gene2:
-            gene2 = spec2 + ":" + bothGenes[2].split(";Name=")[1].split(";")[0]
-        if "gene=" in bothGenes[1]:
-            gene1 = gene1 + "(" + bothGenes[1].split("gene=")[1].split(";")[0] + ")"
-        if "gene=" in bothGenes[2]:
-            gene2 = gene2 + "(" + bothGenes[2].split("gene=")[1].split(";")[0] + ")"
-        if not gene1 in allOrthologs:
-            allOrthologs[gene1] = set()
-        mySet = allOrthologs[gene1]
-        mySet.add(gene1)
-        mySet.add(gene2)
-        allOrthologs[gene1] = mySet
-        if not gene2 in allOrthologs:
-            allOrthologs[gene2] = set()
-        mySet2 = allOrthologs[gene2]
-        mySet2.add(gene1)
-        mySet2.add(gene2)
-        allOrthologs[gene2] = mySet2
-    input.close()
+    with open(species, "r") as input:
+        bothSpecies = input.next().strip().split("\t")
+        if len(bothSpecies) != 3:
+            return allOrthologs
+        spec2 = bothSpecies[1].split("/")[-1]
+        spec1 = bothSpecies[2].split("/")[-1]
+            # spec1 = bothSpecies[1].split('/')[-1]
+            # spec2 = bothSpecies[2].split('/')[-1]
+        for line in input:
+            line = line.strip()
+            bothGenes = line.split("\t")
+            if len(bothGenes) != 3:
+                continue
+            gene1 = f"{spec1}:{bothGenes[1]}"
+            if ";Name=" in gene1:
+                gene1 = f"{spec1}:" + bothGenes[1].split(";Name=")[1].split(";")[0]
+            gene2 = f"{spec2}:{bothGenes[2]}"
+            if ";Name=" in gene2:
+                gene2 = f"{spec2}:" + bothGenes[2].split(";Name=")[1].split(";")[0]
+            if "gene=" in bothGenes[1]:
+                gene1 = f"{gene1}(" + bothGenes[1].split("gene=")[1].split(";")[0] + ")"
+            if "gene=" in bothGenes[2]:
+                gene2 = f"{gene2}(" + bothGenes[2].split("gene=")[1].split(";")[0] + ")"
+            if gene1 not in allOrthologs:
+                allOrthologs[gene1] = set()
+            mySet = allOrthologs[gene1]
+            mySet.add(gene1)
+            mySet.add(gene2)
+            allOrthologs[gene1] = mySet
+            if gene2 not in allOrthologs:
+                allOrthologs[gene2] = set()
+            mySet2 = allOrthologs[gene2]
+            mySet2.add(gene1)
+            mySet2.add(gene2)
+            allOrthologs[gene2] = mySet2
     return allOrthologs
 
 
@@ -142,23 +139,19 @@ def writeToFile(args, allOrthologs):
     Output: None
     """
 
-    output = sys.stdout
     usedGenes = set()
     groupNum = 0
-    if args.output:
-        output = open(args.output, "w")
+    output = open(args.output, "w") if args.output else sys.stdout
     for key in allOrthologs:
         if key in usedGenes:
             continue
         spec = key.split(":")[0]
-        speciesUsed = set()
-        speciesUsed.add(spec)
-        allOrthos = set()
-        allOrthos.add(key)
+        speciesUsed = {spec}
+        allOrthos = {key}
         allOrthos = findOrthoGroup(allOrthologs, key, speciesUsed, allOrthos)
         if len(allOrthos) > 0:
             groupNum += 1
-            output.write("Ortholog Group " + str(groupNum) + ":")
+            output.write(f"Ortholog Group {groupNum}:")
             for x in allOrthos:
                 usedGenes.add(x)
                 output.write("\t" + x)
