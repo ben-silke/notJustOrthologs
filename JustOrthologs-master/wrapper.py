@@ -214,10 +214,8 @@ def parseArgs():
         print("Warning: It is highly recommended that you use --s when running --r")
 
     possibleFiles = {"gff3_One", "gff3_Two", "ref_One", "ref_Two", "fasta"}
-    count = 0
-    for x in vars(args):
-        count += 1
-        if x in possibleFiles and vars(args)[x] is not None:
+    for x, value in vars(args).items():
+        if x in possibleFiles and value is not None:
             file = str(vars(args)[x])
             if not os.path.isfile(file):
                 print(file, "is not a correct file path!")
@@ -230,21 +228,20 @@ def cleanUp(printFiles):
     Removes all temporary files.
     """
     possibleFiles = {
-        ".extract_1_" + TEMP_FILE_NUM,
-        ".extract_2_" + TEMP_FILE_NUM,
-        ".filter_1_" + TEMP_FILE_NUM,
-        ".filter_2_" + TEMP_FILE_NUM,
-        ".sort_1_" + TEMP_FILE_NUM,
-        ".sort_2_" + TEMP_FILE_NUM,
+        f".extract_1_{TEMP_FILE_NUM}",
+        f".extract_2_{TEMP_FILE_NUM}",
+        f".filter_1_{TEMP_FILE_NUM}",
+        f".filter_2_{TEMP_FILE_NUM}",
+        f".sort_1_{TEMP_FILE_NUM}",
+        f".sort_2_{TEMP_FILE_NUM}",
     }
 
     for pos in possibleFiles:
         if printFiles:
             if os.path.isfile(pos):
                 print("Temporary File is located at:", pos)
-        else:
-            if os.path.isfile(pos):
-                os.remove(pos)
+        elif os.path.isfile(pos):
+            os.remove(pos)
 
 
 def runExtract(gff3, ref, keep, num):
@@ -252,7 +249,7 @@ def runExtract(gff3, ref, keep, num):
     Extracts coding sequences from gff3 files.
     """
     try:
-        temp1 = ".extract_" + str(num) + "_" + TEMP_FILE_NUM
+        temp1 = f".extract_{str(num)}_{TEMP_FILE_NUM}"
         command = ["python3", "gff3_parser.py", "-g", gff3, "-f", ref, "-o", temp1]
         prog = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:
@@ -267,7 +264,7 @@ def runFilter(input, num):
     Ensures that all sequences have no annotated exceptions.
     """
     try:
-        temp1 = ".filter_" + str(num) + "_" + TEMP_FILE_NUM
+        temp1 = f".filter_{str(num)}_{TEMP_FILE_NUM}"
         command = ["python3", "getNoException.py", "-i", input, "-o", temp1]
         prog = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception:

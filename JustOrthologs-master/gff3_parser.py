@@ -44,10 +44,7 @@ def readGFF(output, gff, allSeq):
 
     """
     input = ""
-    if gff[-3:] == ".gz":
-        input = gzip.open(gff, "r")
-    else:
-        input = open(gff, "r")
+    input = gzip.open(gff, "r") if gff[-3:] == ".gz" else open(gff, "r")
     currentAccession = ""
     currentGene = ""
     currentSeq = ""
@@ -70,7 +67,7 @@ def readGFF(output, gff, allSeq):
                     output.write("\n")
                 afterFirst = True
 
-                output.write(">" + info[8] + "\n")
+                output.write(f">{info[8]}" + "\n")
                 currentAccession = accession
                 currentSeq = allSeq[accession]
             if accession != currentAccession:
@@ -82,9 +79,9 @@ def readGFF(output, gff, allSeq):
             continue
         if info[6] == "-":
             my_seq = Seq(smaller)
-            output.write(str(my_seq.reverse_complement()) + "*")
+            output.write(f"{str(my_seq.reverse_complement())}*")
         else:
-            output.write(smaller + "*")
+            output.write(f"{smaller}*")
     output.write("\n")
     output.close()
     input.close()
@@ -97,10 +94,7 @@ def readFasta(fasta):
     Returns: Dictionary of fasta file sequences.
     """
     allDNA = ""
-    if fasta[-3:] == ".gz":
-        allDNA = gzip.open(fasta, "r")
-    else:
-        allDNA = open(fasta, "r")
+    allDNA = gzip.open(fasta, "r") if fasta[-3:] == ".gz" else open(fasta, "r")
     allSeq = dict()
     lastHeader = ""
     sequenceLine = ""
@@ -110,17 +104,13 @@ def readFasta(fasta):
             if sequenceLine != "":
                 allSeq[lastHeader] = sequenceLine
             if line.startswith(">gi"):
-                if line.count("|") >= 3:
-                    lastHeader = line.split("|")[3]
-                else:
-                    lastHeader = line[1:].strip()
+                lastHeader = line.split("|")[3] if line.count("|") >= 3 else line[1:].strip()
+            elif line.count("|") >= 1:
+                lastHeader = line.split("|")[1]
+            elif line.count(" ") > 0:
+                lastHeader = line.split(" ")[0][1:]
             else:
-                if line.count("|") >= 1:
-                    lastHeader = line.split("|")[1]
-                elif line.count(" ") > 0:
-                    lastHeader = line.split(" ")[0][1:]
-                else:
-                    lastHeader = line[1:].strip()
+                lastHeader = line[1:].strip()
             sequenceLine = ""
             continue
         sequenceLine += line.strip()
@@ -137,7 +127,5 @@ if __name__ == "__main__":
     # freeze_support()
     args = parseArgs()
     sequences = readFasta(args.fasta)
-    output = sys.stdout
-    if args.output:
-        output = open(args.output, "w")
+    output = open(args.output, "w") if args.output else sys.stdout
     readGFF(output, args.gff, sequences)
